@@ -74,7 +74,7 @@ base::sourcePath() {
 
 # Where is the current script physically located?
 base::where() {
-    local source=${BASH_SOURCE[0]}
+    local source=${1}
     while [ -h "$source" ]; do
         local dir=$( base::sourcePath "$source" )
         source=$(readlink "$source")
