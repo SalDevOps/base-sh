@@ -83,6 +83,11 @@ base::where() {
     echo $( base::sourcePath "$source" )
 }
 
+base::trailingArguments() {
+    local _unescaped=$(echo "${1}" | tr -d "'")
+    [[ ${_unescaped} =~ [[:space:]]--[[:space:]]+(.+) ]] && echo ${BASH_REMATCH[1]} || true
+}
+
 # For testing purposes
 base::ping() {
     echo "pong!"
