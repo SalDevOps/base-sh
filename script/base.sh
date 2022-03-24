@@ -39,14 +39,14 @@ base::unsetAll() {
 }
 
 base::cleanExit() {
-    echo "Cleaning... Will unset all and exit"
+    echo "Clean..exit"
     base::unsetAll
     exit 0
 }
 
 base::onExit() {
-  if [ "$1" != "0" ]; then
-    printf "Exit with Error $1 [line $2] "
+  if [[ -n "${1}" ]] && [[ "${1}" != "0" ]]; then
+    printf "Exit with Error ${1}"
   else
     echo "Work Completed!"
   fi
@@ -54,11 +54,14 @@ base::onExit() {
 }
 
 base::onError() {
-  if [ "$1" != "0" ]; then
-    echo "Error $1 at line $2"
-  else
-    echo "Interesting! There was an error, but we're unable to determine the actual error code"
-  fi
+    if [[ -n "${1}" ]]; then
+        printf "Error ${1}"
+        [[ -n "${2}" ]] && printf " at line ${2}" || true
+        echo
+    else
+        echo "Interesting! There was an error.. but we're unable to determine the actual error code"
+        exit 127
+    fi
 }
 
 base::obfuscate() {
@@ -83,6 +86,14 @@ base::where() {
     echo $( base::sourcePath "$source" )
 }
 
+base::existAny() {
+    if ls -a ${1} &>/dev/null; then { echo 1; } fi
+}
+
+base::removeAny() {
+    if ls -a ${1} &>/dev/null; then { rm -rf ${1}; } fi
+}
+
 base::trailingArguments() {
     local _unescaped=$(echo "${1}" | tr -d "'")
     [[ ${_unescaped} =~ [[:space:]]--[[:space:]]+(.+) ]] && echo ${BASH_REMATCH[1]} || true
@@ -93,4 +104,6 @@ base::ping() {
     echo "pong!"
 }
 
-echo "Successfully sourced all Base.sh functions"
+base::version() {
+    echo "base.sh v0.2 //github.com/d-libre/base-sh"
+}
